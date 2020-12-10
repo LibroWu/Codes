@@ -1,0 +1,167 @@
+//A date class
+
+#include <iostream>
+#include <cstdlib>
+#include <cstdio>
+using namespace std;
+const int month_days[] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+class Date
+{
+private:
+    int _year;
+    int _month;
+    int _day;
+public:
+    //构造函数
+    Date(int y_=1900,int m_=1,int d_=1):_year(y_),_month(m_),_day(d_){
+        if (m_>12 || m_<1 || d_<1 || d_>((m_==2)?((check(y_))?29:28):month_days[m_])) {
+            _year=1900;
+            _month=1;
+            _day=1;
+        }
+    }
+    Date& operator=(const Date& b){
+        _year=b._year;
+        _month=b._month;
+        _day=b._day;
+        return *this;
+    }
+    //判断是否为闰年
+    bool check(int year){
+        return ((year%4==0 && year%100!=0) || year%400==0);
+    }
+    //一个日期加上一个天数
+    Date operator+(int offset){
+        Date res=*this;
+        for (;offset;--offset) ++res;
+        return res;
+    }
+    //一个日期减去一个天数
+    Date operator-(int offset){
+        Date res=*this;
+        for (;offset;--offset) --res;
+        return res;
+    }
+    //前置++
+    Date&operator++(){
+        int mon=((_month==2)?((check(_year))?29:28):month_days[_month]);
+        if (_day==mon){
+            if (_month==12) {
+                ++_year;
+                _month=1;
+            }else ++_month;
+            _day=1;
+        }
+        else ++_day;
+        return *this;
+    }
+    //后置++
+    Date operator++(int){
+        Date res=*this;
+        ++*this;
+        return res;
+    }
+    //前置--
+    Date& operator--(){
+        if (_day==1){
+            if (_month==1) {
+                _month=12;
+                --_year;
+            }else --_month;
+            _day=((_month==2)?((check(_year))?29:28):month_days[_month]);
+        }else --_day;
+        return *this;
+    }
+    //后置--
+    Date operator--(int){
+        Date res=*this;
+        --*this;
+        return res;
+    }
+    //<重载
+    bool operator<(const Date& other) const {
+        if (_year<other._year)return 1;
+        else if (_year>other._year)return 0;
+        if (_month<other._month)return 1;
+        else if (_month>other._month)return 0;
+        if (_day<other._day)return 1;
+        else if (_day>other._day)return 0;
+        return 0;
+    }
+    //重载输出运算符
+    friend ostream& operator<<(ostream& out, const Date& a){
+        out<<a._year<<'-'<<a._month<<'-'<<a._day;
+        return out;
+    }
+    friend int operator-( Date a, Date b){
+        Date tmp;
+        if (!(a<b)) {
+            tmp=a;
+            a=b;
+            b=tmp;
+        }
+        int ans=0;
+        while (a<b) {
+            ++a;
+            ++ans;
+        }
+        return ans;
+    }
+    //以上仅为提示，不代表你需要完成所有，你也可以添加其他需要的函数。
+};
+
+void Test()
+{
+    int op;
+    cin >> op;
+    int yy, mm, dd;
+    if (op == 1 || op == 0)
+    {
+        Date d0;
+        Date d1(2000, 2, 29);
+        Date d2(1900, 2, 29);
+        cout << d0 << endl;
+        cout << d1 << endl;
+        cout << d2 << endl;
+        //d0.out(); d1.out(); d2.out();
+    }
+    if (op == 2 || op == 0)
+    {
+        cin >> yy >> mm >> dd;
+        Date d0(yy, mm, dd);
+        for (int i=0;i<5;++i) cout << ++d0 << endl; //(++d0).out();
+        for (int i=0;i<5;++i) cout << d0++ << endl; //(d0++).out();
+        for (int i=0;i<5;++i) cout << d0-- << endl; //(d0--).out();
+        for (int i=0;i<2;++i) cout << --d0 << endl; //(--d0).out();
+        cout << d0 << endl;
+        //d0.out();
+    }
+    if (op == 3 || op == 0)
+    {
+        cin >> yy >> mm >> dd;
+        Date d0(yy, mm, dd);
+        cout << d0 + 100 << endl;
+        // (d0+100).out();
+        cout << d0 - 1000 << endl;
+        // (d0-1000).out();
+    }
+    if (op == 4 || op == 0)
+    {
+        cin >> yy >> mm >> dd;
+        Date d0(yy, mm, dd);
+        Date d1(2020, 12, 21);
+        cout << (d0 < d1) << endl;
+    }
+    if (op == 5 || op == 0)
+    {
+        cin >> yy >> mm >> dd;
+        Date d0(yy, mm, dd);
+        Date d1(1912, 6, 23);
+        cout << d0 - d1 << endl;
+    }
+}
+int main()
+{
+    Test();
+    return 0;
+}
